@@ -1,0 +1,29 @@
+# Environment files (may contain passwords)
+.env
+
+# Claude Code session data
+.claude/
+
+# Docker volumes data
+data/
+prometheus_data/
+grafana_data/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-*
+
+# Backup files
+*.bak
+*.backup

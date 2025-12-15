@@ -1,0 +1,78 @@
+# Claude Code Monitoring Stack
+# Runs OpenTelemetry Collector, Prometheus, and Grafana in Docker
+#
+# Quick start:
+#   1. cp .env.example .env (optional - defaults work fine)
+#   2. docker compose up -d
+#   3. Configure Claude Code telemetry (see README.md)
+#   4. Access Grafana at http://localhost:3030 (admin/admin)
+
+services:
+  # OpenTelemetry Collector - receives metrics from Claude Code
+  claude-otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: claude-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      # gRPC endpoint (Claude Code connects here via OTEL_EXPORTER_OTLP_ENDPOINT)
+      - "${OTEL_GRPC_PORT:-4317}:4317"
+      # HTTP endpoint (alternative protocol)
+      - "${OTEL_HTTP_PORT:-4318}:4318"
+      # Prometheus metrics export (scraped by Prometheus)
+      - "${OTEL_METRICS_PORT:-8889}:8889"
+    depends_on:
+      - claude-prometheus
+    restart: unless-stopped
+
+  # Prometheus - time-series database for metrics storage
+  claude-prometheus:
+    image: prom/prometheus:latest
+    container_name: claude-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      # Retention period: how long to keep data (default: ~8 days)
+      - '--storage.tsdb.retention.time=${PROMETHEUS_RETENTION:-200h}'
+      # Enable API endpoints for reload/shutdown
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      # Persistent storage for metrics data
+      - claude_prometheus_data:/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    restart: unless-stopped
+
+  # Grafana - visualization and dashboarding
+  claude-grafana:
+    image: grafana/grafana:latest
+    container_name: claude-grafana
+    environment:
+      # Admin credentials (CHANGE IN PRODUCTION!)
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      # Disable user sign-up (security)
+      - GF_USERS_ALLOW_SIGN_UP=false
+      # Allow anonymous viewing (optional - comment out for production)
+      # - GF_AUTH_ANONYMOUS_ENABLED=true
+      # - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      # Persistent storage for Grafana database, sessions, plugins
+      - claude_grafana_data:/var/lib/grafana
+      # Auto-provision datasources and dashboards (read-only)
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "${GRAFANA_PORT:-3030}:3000"
+    depends_on:
+      - claude-prometheus
+    restart: unless-stopped
+
+# Named volumes for persistent data
+# To delete: docker compose down -v (WARNING: deletes all metrics!)
+volumes:
+  claude_prometheus_data:
+    driver: local
+  claude_grafana_data:
+    driver: local
