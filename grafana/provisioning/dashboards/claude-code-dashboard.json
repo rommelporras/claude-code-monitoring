@@ -189,7 +189,7 @@
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "editorMode": "code",
           "expr": "sum(increase(claude_code_cost_usage_USD_total[$__range])) / (sum(increase(claude_code_token_usage_tokens_total[$__range])) / 1000000)",
-          "legendFormat": "Cost/1k",
+          "legendFormat": "Cost/1M",
           "range": true,
           "refId": "A"
         }
