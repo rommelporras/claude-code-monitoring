@@ -67,7 +67,8 @@
           "refId": "A"
         }
       ],
-      "title": "Cost (30 Days)",
+      "title": "Monthly Cost",
+      "description": "Rolling 30-day total. Not affected by time picker.",
       "type": "stat"
     },
     {
@@ -112,7 +113,7 @@
           "refId": "A"
         }
       ],
-      "title": "Cost (Range)",
+      "title": "Cost (Selected)",
       "type": "stat"
     },
     {
@@ -164,7 +165,7 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
-          "decimals": 4,
+          "decimals": 2,
           "mappings": [],
           "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }] },
           "unit": "currencyUSD"
@@ -187,13 +188,13 @@
         {
           "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
           "editorMode": "code",
-          "expr": "sum(increase(claude_code_cost_usage_USD_total[$__range])) / (sum(increase(claude_code_token_usage_tokens_total[$__range])) / 1000)",
+          "expr": "sum(increase(claude_code_cost_usage_USD_total[$__range])) / (sum(increase(claude_code_token_usage_tokens_total[$__range])) / 1000000)",
           "legendFormat": "Cost/1k",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Cost per 1k Tokens",
+      "title": "Cost per 1M Tokens",
       "type": "stat"
     },
     {
@@ -301,7 +302,8 @@
           "refId": "A"
         }
       ],
-      "title": "Tokens (30 Days)",
+      "title": "Monthly Tokens",
+      "description": "Rolling 30-day total. Not affected by time picker.",
       "type": "stat"
     },
     {
