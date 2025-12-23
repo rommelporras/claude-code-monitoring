@@ -790,7 +790,7 @@
           }
         ]
       },
-      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 13 },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 12 },
       "id": 17,
       "options": {
         "cellHeight": "sm",
