@@ -379,6 +379,7 @@ Ensure `sortBy` references the **renamed column name**, not the original field:
 
 See `CHANGELOG.md` for release notes. This project uses semantic versioning.
 
-**Current version:** 1.1.0
+**Current version:** 1.1.1
+- v1.1.1 - Fix container auto-restart on Windows Docker Desktop
 - v1.1.0 - Dashboard v2 with improved layout and productivity metrics
 - v1.0.0 - Initial release

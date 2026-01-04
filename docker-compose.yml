@@ -24,7 +24,7 @@ services:
       - "${OTEL_METRICS_PORT:-8889}:8889"
     depends_on:
       - claude-prometheus
-    restart: unless-stopped
+    restart: always
 
   # Prometheus - time-series database for metrics storage
   claude-prometheus:
@@ -43,7 +43,7 @@ services:
       - claude_prometheus_data:/prometheus
     ports:
       - "${PROMETHEUS_PORT:-9090}:9090"
-    restart: unless-stopped
+    restart: always
 
   # Grafana - visualization and dashboarding
   claude-grafana:
@@ -67,7 +67,7 @@ services:
       - "${GRAFANA_PORT:-3030}:3000"
     depends_on:
       - claude-prometheus
-    restart: unless-stopped
+    restart: always
 
 # Named volumes for persistent data
 # To delete: docker compose down -v (WARNING: deletes all metrics!)
